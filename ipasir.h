@@ -4,6 +4,14 @@
 #ifndef ipasir_h_INCLUDED
 #define ipasir_h_INCLUDED
 
+/* Depending on the version of the interface, certain functions might not be
+ * supported by the SAT backend that implements the interface. Therefore, allow
+ * to control the version to be used via a macro.
+ */
+#ifndef IPASIR_VERSION
+#define IPASIR_VERSION 3
+#endif
+
 /*
  * In this header, the macro IPASIR_API is defined as follows:
  * - if IPASIR_SHARED_LIB is not defined, then IPASIR_API is defined, but empty.
@@ -115,6 +123,7 @@ IPASIR_API void ipasir_assume (void * solver, int lit);
  */
 IPASIR_API int ipasir_solve (void * solver);
 
+#if defined(IPASIR_VERSION) && IPASIR_VERSION >= 3
 /**
  * Solve the formula with specified clauses under the specified assumptions.
  * If the formula is satisfiable the function returns 10 and the state of the solver is changed to SAT.
@@ -128,6 +137,7 @@ IPASIR_API int ipasir_solve (void * solver);
  * State after: SAT_NOSOLVE or UNSAT_NOSOLVE
  */
 IPASIR_API int ipasir_solve_final (void * solver);
+#endif /* IPASIR_VERSION >= 3 */
 
 /**
  * Get the truth value of the given literal in the found satisfying
@@ -169,6 +179,7 @@ IPASIR_API int ipasir_failed (void * solver, int lit);
  */
 IPASIR_API void ipasir_set_terminate (void * solver, void * state, int (*terminate)(void * state));
 
+#if defined(IPASIR_VERSION) && IPASIR_VERSION >= 2
 /**
  * Set a callback function used to extract learned clauses up to a given length from the
  * solver. The solver will call this function for each learned clause that satisfies
@@ -184,6 +195,7 @@ IPASIR_API void ipasir_set_terminate (void * solver, void * state, int (*termina
  * State after: INPUT or SAT or UNSAT
  */
 IPASIR_API void ipasir_set_learn (void * solver, void * state, int max_length, void (*learn)(void * state, int * clause));
+#endif
 
 #ifdef __cplusplus
 } // closing extern "C"
